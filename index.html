@@ -1,6 +1,13 @@
 
 <!DOCTYPE html>
 <html lang="hu">
+<script>
+  const password = prompt("🔐 Kérlek, add meg a jelszót az oldal megnyitásához:");
+  if (password !== "tutireceptek2025") {
+    document.body.innerHTML = "<h1 style='text-align:center;margin-top:50px;'>⛔ Hozzáférés megtagadva</h1>";
+    throw new Error("Helytelen jelszó");
+  }
+</script>
 <head>
   <meta charset="UTF-8">
   <title>Receptek (Offline)</title>
