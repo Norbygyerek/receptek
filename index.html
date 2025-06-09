@@ -2,12 +2,17 @@
 <!DOCTYPE html>
 <html lang="hu">
 <script>
+  document.documentElement.innerHTML = ""; // Azonnal törli az oldal tartalmát
+
   const password = prompt("🔐 Kérlek, add meg a jelszót az oldal megnyitásához:");
-  if (password !== "tutireceptek2025") {
-    document.body.innerHTML = "<h1 style='text-align:center;margin-top:50px;'>⛔ Hozzáférés megtagadva</h1>";
-    throw new Error("Helytelen jelszó");
+
+  if (password === "recept25") {
+    location.reload(); // újratölti a teljes oldalt, immár engedve a tartalmat
+  } else {
+    document.write("<h1 style='text-align:center;margin-top:50px;'>⛔ Helytelen jelszó</h1>");
   }
 </script>
+
 <head>
   <meta charset="UTF-8">
   <title>Receptek (Offline)</title>
