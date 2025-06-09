@@ -1,0 +1,1947 @@
+
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Receptek (Offline)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <style>
+    body { font-family: sans-serif; padding: 1rem; background: #fafafa; }
+    input, select { margin: 0.5rem 0; padding: 0.4rem; width: 100%; }
+    .recipe { margin: 0.5rem 0; }
+    .recipe a { text-decoration: none; color: #0066cc; }
+  </style>
+</head>
+<body>
+  <h1>Receptek (Offline)</h1>
+  <input type="text" id="searchInput" placeholder="Keresés név alapján...">
+  <input type="text" id="ingredientInput" placeholder="Keresés hozzávalóra...">
+  <select id="categorySelect">
+    <option value="">Összes kategória</option>
+    <option value="desszertek">Desszertek</option><option value="ebedek">Ebedek</option><option value="kencek">Kencek</option><option value="levesek">Levesek</option><option value="reggelik">Reggelik</option><option value="salatak">Salatak</option>
+  </select>
+  <button onclick="showRandom()">🎲 Véletlen recept</button>
+  <ul id="recipeList"></ul>
+
+  <script>
+    const recipes = [
+  {
+    "title": "“Sajttorta” pohárkrém",
+    "file": "00_001_sajttorta-poharkrem.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Epres kosarak cukormentes zabpudinggal",
+    "file": "00_002_epres-kosarak-cukormentes-zabpudinggal.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Banános csicseriborsó muffin",
+    "file": "00_003_bananos-csicseriborso-muffin.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Áfonyás-vaníliás sült zabkása banánnal (tojás-, tejmentes)",
+    "file": "00_004_afonyas-sult-zabkasa-banannal-tojas-tejmentes.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Epres brownie (tejmentes, gluténmentes)",
+    "file": "00_005_brownie-tejmentes-glutenmentes.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Kakaós zabpehely joghurttal és eperrel",
+    "file": "00_006_kakaos-zabpehely-joghurttal-es-eperrel.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Almás-banános kókuszgolyó",
+    "file": "00_007_almas-kokuszgolyo.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Meggyes-mákos túrókrém",
+    "file": "00_008_meggyes-makos-turokrem.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Egyszerű banános palacsinta",
+    "file": "00_009_egyszeru-bananos-palacsinta.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Mákos-citromos muffin reszelt almával",
+    "file": "00_010_makos-citromos-muffin-reszelt-almaval.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Banános chia puding málna öntettel (hozzáadott cukortól mentes)",
+    "file": "00_011_bananos-chia-puding-malna-ontettel-hozzaadott-cukortol-mentes.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Almás-fahéjas kása (áztatva)",
+    "file": "00_012_almas-fahejas-kasa-aztatva.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Sütőtökös-banános szelet  (mindenmentes)",
+    "file": "00_013_sutotokos-bananos-szelet-mindenmentes.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Diós teljes kiőrlésű kekszek (cukormentes)",
+    "file": "00_014_dios-fahejas-sutik-hozzaadott-cukortol-mentes-rostdus.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Diós hókifli (rostdús, cukormentes)",
+    "file": "00_015_hokifli-rostdus-cukormentes.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Narancsos-étcsokoládés muffinok",
+    "file": "00_016_narancsos-etcsokolades-muffinak.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Kókuszos-kiwis chia puding (hozzáadott cukortól mentes)",
+    "file": "00_017_kokuszos-kiwis-chia-puding.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Tonhalas-spenótos keksz",
+    "file": "00_018_fustolt-sajtos-kapros-keksz.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Fehérjedús szilvás-fahéjas süti",
+    "file": "00_019_feherjedus-szilvas-fahejas-suti.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Mákos-joghurtos palacsinta",
+    "file": "00_020_makos-joghurtos-palacsinta.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Fahéjas házi granola (cukormentes)",
+    "file": "00_021_fahejas-hazi-granola-cukormentes.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Kekszszalámi (cukor- és fehér liszt mentesen)",
+    "file": "00_022_kekszszalami-cukor-es-feher-liszt-mentesen.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Cseresznyés piskóta",
+    "file": "00_023_gyumolcsos-zabpelyhes-piskota.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Hozzáadott cukortól mentes erdei gyümölcsös fagyi",
+    "file": "00_024_hozzaadott-cukortol-mentes-erdei-gyumolcsos-fagyi.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Cseresznyés-túrós hozzáadott cukortól mentes sütemény",
+    "file": "00_025_meggyes-vagy-cseresznyes-turos-cukormentes-sutemeny.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Cukkinis cukormentes brownie",
+    "file": "00_026_cukkinis-cukormentes-brownie.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Gyors epres-mandulás pite",
+    "file": "00_027_gyors-epres-mandulas-pite.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Erdei gyümölcsös / epres chia puding",
+    "file": "00_028_erdei-gyumolcsos-epres-chia-puding.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Kakaós császármorzsa",
+    "file": "00_029_kakaos-csaszarmorzsa.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Epres-vaníliás zabpuding cukormentesen",
+    "file": "00_030_epres-vanilias-zabpuding-cukormentesen.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Répás-diós banánkenyér",
+    "file": "00_031_repas-dios-banankenyer.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Füstölt sajtos-kapros keksz",
+    "file": "00_032_fustolt-sajtos-kapros-szelet.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Epres-kókuszos quinoa kása",
+    "file": "00_033_epres-kokuszos-quinoa-kasa.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Banános-almás muffin mogyoróvajjal",
+    "file": "00_034_bananos-almas-muffin-mogyorovajjal.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Mákos-áfonyás sütemény",
+    "file": "00_035_makos-afonyas-sutemeny.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Mákos-meggyes cukormentes muffin",
+    "file": "00_036_makos-meggyes-cukormentes-muffin.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Hamis tejbe”gríz”",
+    "file": "00_037_hamis-tejbegriz.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Kiwis túrókrém",
+    "file": "00_038_kiwis-turokrem.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Répás-pekándiós muffin",
+    "file": "00_039_repas-pekandios-muffin.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Lekváros palacsinta hozzáadott cukortól mentesen",
+    "file": "00_040_lekvaros-palacsinta-hozzaadott-cukortol-mentesen.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "“Mézeskalács” méz nélkül",
+    "file": "00_041_mezeskalacs-mez-nelkul.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Zablisztes zserbógolyók hozzáadott cukortól mentesen",
+    "file": "00_042_zablisztes-zserbogolyok-hozzaadott-cukortol-mentesen.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Fehérjében gazdag citromos-gyömbéres banánkenyér",
+    "file": "00_043_feherjeben-gazdag-citromos-gyomberes-banankenyer.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Sült almás-fahéjas chiapuding",
+    "file": "00_044_sult-almas-fahejas-chiapuding.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Narancsos-étcsokoládés zabkeksz",
+    "file": "00_045_csokis-zabsutemeny-2.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Sütőtökös muffin",
+    "file": "00_046_sutotokos-muffin.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Cukormentes, rostdús répatorta",
+    "file": "00_047_cukormentes-rostdus-repatorta.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Mini 15 perces vaníliás “sajttorta”",
+    "file": "00_048_mini-15-perces-vanilias-sajttorta.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Körtés bulgur felfújt",
+    "file": "00_049_kortes-bulgur-felfujt.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Sütőtökös golyó cukormentesen",
+    "file": "00_050_sutotokos-golyo-cukormentesen.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Cukormentes sajttorta málnaszósszal",
+    "file": "00_051_cukormentes-sajttorta-malnaszosszal.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Diós-szilvás sült zabkása",
+    "file": "00_052_dios-szilvas-sult-zabkasa.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Almás-répás energiagolyó",
+    "file": "00_053_sutotokos-almas-sutemeny-olajos-magvakkal-2.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Sütőtökös-almás sütemény olajos magvakkal",
+    "file": "00_054_sutotokos-almas-sutemeny-olajos-magvakkal.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Hozzáadott cukortól mentes almás-diós müzliszelet",
+    "file": "00_055_hozzaadott-cukortol-mentes-almas-dios-muzliszelet.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Körtés gofri citromos ricottával",
+    "file": "00_056_kortes-gofri-citromos-ricotta-kremmel.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Csokis zabsütemény",
+    "file": "00_057_csokis-zabsutemeny.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Szilvás kevert sütemény",
+    "file": "00_058_szilvas-joghurtos-kevert-sutemeny.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Sárgabarackos-kekszes túrókrém",
+    "file": "00_059_sargabarackos-kekszes-turokrem.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Glutén- és tejmentes almás pite",
+    "file": "00_060_gluten-es-tejmentes-almaspite.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Málnás-vaníliás tejberizs",
+    "file": "00_061_malnas-vanilias-tejberizs.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Kókuszos-áfonyás tápiókapuding",
+    "file": "00_062_kokuszos-afonyas-tapiokapuding.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Joghurtos gyors barackos pite",
+    "file": "00_063_gyors-barackos-kokuszos-pite.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Kakaós zabpuding",
+    "file": "00_064_5-perces-hideg-kakaos-zabpuding-hazilag.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Kakaós gofri",
+    "file": "00_065_kakaos-gofri.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Epres zabgolyó",
+    "file": "00_066_epres-zabgolyo.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Cseresznyés kakaós süti",
+    "file": "00_067_cseresznyes-kakaos-suti-sutemeny.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Mindenmentes gyümölcsös sütemény",
+    "file": "00_068_tojasmentes-zabos-sutemeny.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Mandulavajas tortilla tekercs banánnal",
+    "file": "00_069_mandulavajas-tortilla-tekercs-banannal.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Banános kókuszgolyó",
+    "file": "00_070_bananos-kokuszgolyo.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Túrógombóc erdei gyümölcs öntettel",
+    "file": "00_071_turogomboc-erdei-gyumolcs-ontettel.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Pekándiós keksz",
+    "file": "00_072_pekandios-keksz.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Tehéntúrós epres kevert sütemény",
+    "file": "00_073_tehenturos-epres-kevert-sutemeny.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Raffaelló golyók",
+    "file": "00_074_raffaello-golyok.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Banános-mogyoróvajas mentes muffin",
+    "file": "00_075_bananos-mogyorovajas-muffin.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Céklás pekándiós brownie",
+    "file": "00_076_ceklas-pekandios-brownie.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Barackos-áfonyás kevert sütemény",
+    "file": "00_077-afonyas-cleaned.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Barackos-áfonyás kevert sütemény",
+    "file": "00_077_barackos-afonyas-kevert-sutemeny.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Füstölt lazacos rukkolás wrap",
+    "file": "00_078_fustolt-lazacos-rukkolas-wrap.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Túrós palacsinta házi lekvárral",
+    "file": "00_079_turos-palacsinta-malna-szosszal.html",
+    "category": "desszertek"
+  },
+  {
+    "title": "Kapros-túrós pite",
+    "file": "01_001_kapros-turos-pite.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Spenótos-ricottás lasagne",
+    "file": "01_002_spenotos-ricottas-lasagne.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Sütőben sült durbincs basmati rizzsel, kapros tzatziki szósszal és sült zöldségekkel",
+    "file": "01_003_sutoben-sult-durbincs-basmati-rizzsel-kapros-tzatziki-szosszal-es-sult-vagy-parolt-zoldsegekkel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Szaftos paprikás ragu bulgurral és savanyú káposztával (tejmentes)",
+    "file": "01_004_szaftos-paprikas-ragu-bulgurral-es-savanyu-kaposztaval-tejmentes.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Kölessel rakott tofu",
+    "file": "01_005_kolessel-rakott-tofu.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Spárgás csirkemell gorgonzola szósszal és basmati rizzsel",
+    "file": "01_006_spargas-csirkemell-gorgonzola-szosszal-es-basmati-rizzsel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Fűszeres csirkecomb krumplival és vegyes sült gyökérzöldségekkel",
+    "file": "01_007_fuszeres-csirkecomb-vegyes-sult-zoldsegekkel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Sütőben sült pisztrángfilé burgonyával, kapros-zöldhagymás salátával",
+    "file": "01_008_sutoben-sult-pisztrangfile-burgonyaval-kapros-zoldhagymas-salataval-mustaros-ontettel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Chili sin carne, avagy húsmentes chilis bab",
+    "file": "01_009_chilis-sin-carne-avagy-husmentes-chilis-bab.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Töltött cukkini (húsos)",
+    "file": "01_010_toltott-cukkini-husos-2.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Aszalt szilvás szűzérme párolt lilakáposztával",
+    "file": "01_011_aszalt-szilvas-szuzerme-parolt-lilakaposztaval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Roston sült / grillezett csirkemell quinoával és répás-almás céklasalátával",
+    "file": "01_012_roston-sult-grillezett-csirkemell-quinoaval-es-repas-almas-ceklasalataval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Tejszínes-spenótos garnéla kuszkusszal",
+    "file": "01_013_tejszines-spenotos-garnela-kuszkusszal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Ázsiai zöldséges csirkemell szójaszósszal és basmati rizzsel",
+    "file": "01_014_mogyoros-csirke-piritott-zoldsegekkel-es-soba-vagy-teljes-kiorlesu-tesztaval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Gombás-zöldfűszeres csirkeragu paradicsomszósszal és barna rizzsel",
+    "file": "01_015_gombas-zoldfuszeres-csirkeragu-paradicsomszosszal-es-barna-rizzsel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Pirított füstölt tofu (vagy tükörtojás) krémes spenótfőzelékkel",
+    "file": "01_016_piritott-fustolt-tofu-kremes-spenotfozelekkel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Gyros fűszerezésű csirkemell sütőben sült burgonyával, zöldségekkel és fokhagymás görögjoghurttal",
+    "file": "01_017_gyros-fuszerezesu-csirkemell-sutoben-sult-burgonyaval-zoldsegekkel-es-fokhagymas-gorogjoghurttal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Grillezett halloumi sajt curry-s bulgurral + tzatziki fűszeres joghurttal",
+    "file": "01_018_grillezett-halloumi-sajt-cukkini-curry-s-bulgurral-es-tzatziki-fuszeres-joghurttal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Paradicsomos vöröslencsével rakott cukkini",
+    "file": "01_019_paradicsomos-voroslencsevel-rakott-cukkini.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Pirított füstölt tofu bulgur rizibizivel",
+    "file": "01_020_piritott-fustolt-tofu-bulgur-rizibizivel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Hawaii túrópizza",
+    "file": "01_021_hawaii-turopizza.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Házi pizza (teljes kiőrlésű liszttel)",
+    "file": "01_022_pizza-teljes-kiorlesu-liszttel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Zöldséges túrópizza",
+    "file": "01_023_turopizza.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Sóba főtt hús cukrozatlan ribizlimártással és burgonyával",
+    "file": "01_024_soba-fott-hus-meggymartassal-es-burgonyaval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Almás sertéscomb",
+    "file": "01_025_almas-sertescomb-kuszkusszal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Mustáros nyúl (vagy csirke-) comb tepsis burgonyával és almás káposztasalátával",
+    "file": "01_026_nyul-vagy-csirke-comb-tepsis-burgonyaval-es-vegyes-kaposztasalataval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Kölessel rakott brokkoli (húsos)",
+    "file": "01_027_kolessel-rakott-brokkoli-husos.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Fűszeres lazacfilé sütőben sült zöldségkörettel",
+    "file": "01_028_fuszeres-lazacfile-sutoben-sult-zoldsegkorettel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Székelykáposzta (zsírszegényen)",
+    "file": "01_029_szekelykaposzta-zsirszegenyen.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Lencsés vagy lencse bolognai",
+    "file": "01_030_lencses-vagy-lencse-bolognai.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Zöldséges tejszínes csirke basmati rizzsel",
+    "file": "01_031_zoldseges-tejszines-csirke-basmati-rizzsel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Vadas durum tésztával és savanyúsággal",
+    "file": "01_033_vadas-durum-tesztaval-es-savanyusaggal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Mogyoróvajas tofu pirított zöldségekkel és soba  vagy teljes kiörlésű tésztával",
+    "file": "01_034_mogyorovajas-tofu-piritott-zoldsegekkel-es-soba-vagy-teljes-kiorlesu-tesztaval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Mogyorós csirke pirított zöldségekkel és soba vagy teljes kiörlésű tésztával",
+    "file": "01_035_mogyoros-csirke-piritott-zoldsegekkel-es-soba-tesztaval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Airfryer-ben sült fűszeres lazacfilé gránátalmás-currys bulgurral",
+    "file": "01_036_airfryer-ben-sult-fuszeres-lazacfile-granatalmas-currys-bulgurral.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Vajban sült alaszkai tőkehalfilé sült fűszeres zöldségkörettel és párolt brokkolival",
+    "file": "01_037_vajban-sult-alaszkai-tokehal-sult-zoldsegkorettel-es-parolt-brokkolival.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Krémes currys csirkemell kókusztejjel, hűtött basmati rizzsel",
+    "file": "01_038_kremes-currys-csirkemell-kokusztejjel-hutott-basmati-rizzsel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Répás borsófőzelék airfryer-ben sült panírozott csirkemellcsíkokkal",
+    "file": "01_039_repas-borsofozelek-airfryer-ben-sult-panirozott-csirkemellcsikokkal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Egyszerű hagymás csirkemáj kuszkusszal és savanyúsággal",
+    "file": "01_040_egyszeru-hagymas-csirkemaj-kuszkusszal-es-savanyusaggal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Sütőben sült csirkecomb basmati rizzsel és répás káposztasalátával",
+    "file": "01_041_sutoben-sult-csirkecomb-basmati-rizzsel-es-repas-kaposztasalataval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Sütőben sült citromos-fokhagymás durbincsfilé sült zöldségkörettel és tökmagos salátával",
+    "file": "01_042_sutoben-sult-citromos-fokhagymas-durbincsfile-sult-zoldsegkorettel-es-tokmagos-salataval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Krémes borsófőzelék tükörtojással",
+    "file": "01_043_zsirszegeny-borsofozelek-tukortojassal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Pulykafasírt rizibizivel és sajtszósszal",
+    "file": "01_044_pulykafasirt-rizibizivel-es-sajtszosszal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Répatócsni fokhagymás szósszal",
+    "file": "01_045___trashed.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Csirkés-cheddar sajtos tortilla tekercs",
+    "file": "01_046_csirkes-cheddar-sajtos-tortilla-tekercs.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Zöldségszószos csirkemell petrezselymes kuszkusszal",
+    "file": "01_047_zoldseg-szoszos-csirkemell-petrezselymes-kuszkusszal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Spenótos-tejszínes tészta sült halfilével",
+    "file": "01_048_spenotos-tejszines-teszta-sult-lazacfilevel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Csirkecomfilé quinoával, grill kukoricával, joghurtos szósszal",
+    "file": "01_049_csirkecomfile-quinoaval-sult-kukoricaval-joghurtos-szosszal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Kapros tökfőzelék sült lazaccal",
+    "file": "01_050_kapros-tokfozelek-sult-lazaccal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Bulguros (hamis rizses) hús kovászos uborkával",
+    "file": "01_051_bulguros-hus-kovaszos-uborkaval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Rakott zöldbab",
+    "file": "01_052_rakott-zoldbab.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Zsírszegény (francia) lecsó csirkemellel és bulgurral",
+    "file": "01_053_zsirszegeny-francia-lecso-csirkemellel-es-bulgurral.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Bulgurral töltött paprika",
+    "file": "01_054_bulgurral-toltott-paprika.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Egyszerű tonhalas spagetti olívabogyóval és kukoricával",
+    "file": "01_055_egyszeru-tonhalas-spagetti-olivabogyoval-es-kukoricaval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Hamis “rántott hús” fokhagymás-joghurtos uborkasalátával",
+    "file": "01_056_hamis-rantott-hus-fokhagymas-joghurtos-uborkasalataval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Lecsós csirkemáj bulgurral",
+    "file": "01_057_lecsos-csirkemaj-bulgurral.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Egyszerű cukkinifasírt",
+    "file": "01_058_egyszeru-cukkinifasirt-martogatossal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Spenótos-currys csirke- vagy pulykamell",
+    "file": "01_059_zoldseges-currys-csirkemell-barna-rizzsel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Avokádókrémes tortilla tekercs főtt tojással",
+    "file": "01_060_avokadokremes-tortilla-tekercs-fott-tojassal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Paprika-szószos spenótos tészta",
+    "file": "01_061_paprika-szoszos-spenotos-teszta.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Brokkolis-garnélás teljes kiőrlésű spagetti",
+    "file": "01_062_brokkolis-gombas-csirkemell-tejszines-szosszal-es-teljes-kiorlesu-tesztaval-2.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Brokkolis-gombás csirkemell tejszínes szósszal és teljes kiörlésű tésztával",
+    "file": "01_063_brokkolis-gombas-csirkemell-tejszines-szosszal-es-teljes-kiorlesu-tesztaval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Spenótos ricottakrémmel töltött csirkemell",
+    "file": "01_064_spenotos-ricottakremmel-toltott-csirkemell.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Paradicsomos darált hússal rakott sajtos cukkini",
+    "file": "01_065_paradicsomos-daralt-hussal-rakott-sajtos-cukkini.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Sajtmártásos roston sült csirkemell zöldséges bulgurral",
+    "file": "01_066_sajtmartasos-roston-sult-csirkemell-zoldseges-bulgurral.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Csalánfőzelék tükörtojással és quinoával",
+    "file": "01_067_csalanfozelek-tukortojassal-es-quinoaval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Tejföles-gombás csirkeragu tönkölygaluskával",
+    "file": "01_068_tejfoles-gombas-csirkeragu-tonkolygaluskaval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Paradicsomos-spenótos csirkemell csicseriborsóval és basmati rizzsel",
+    "file": "01_069_paradicsomos-spenotos-csirkemell-csicseriborsoval-es-basmati-rizzsel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Petrezselymes-répás húspogácsa",
+    "file": "01_070_petrezselymes-repas-huspogacsa.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Zöldséges zsírszegény bolognai spagetti",
+    "file": "01_071_zoldseges-zsirszegeny-bolognai-spagetti.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Gombás-paradicsomos basmati rizs tonhallal",
+    "file": "01_072_gombas-paradicsomos-basmati-rizs-tonhallal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Kéksajtos karaj párolt narancsos lila káposztával",
+    "file": "01_073_keksajtos-karaj-parolt-narancsos-lilakaposztaval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Csicseriborsó curry füstölt tofuval",
+    "file": "01_074_csicseriborso-curry-fustolt-tofuval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Ananászos-cheddar sajtos csirkemell kukoricás rizzsel",
+    "file": "01_075_ananaszos-cheddar-sajtos-csirkemell-kukoricas-rizzsel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Spenótos tofu curry basmati rizzsel",
+    "file": "01_076_spenotos-tofu-curry-basmati-rizzsel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Kakukkfüves-fokhagymás szűzérme krémes tejszínes zöldborsófőzelékkel",
+    "file": "01_077_kakukkfuves-fokhagymas-szuzerme-kremes-tejszines-zoldborsofozelekkel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Sült pisztráng bazsalikomos-sült paradicsomos basmati rizzsel",
+    "file": "01_078_sutoben-sult-pisztrang-zoldsegkorettel-2.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Meggyes-kókuszos cukormentes túrógombóc",
+    "file": "01_079_meggyes-kokuszos-cukormentes-turogomboc.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Spenótos-fokhagymás köles vajban sült nílusi sügérrel",
+    "file": "01_080_spenotos-fokhagymas-koles-vajban-sult-nilusi-sugerrel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Pesztós-csirkés tészta",
+    "file": "01_081_pesztos-csirkes-teszta.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Répás-tejföles lencsefőzelék",
+    "file": "01_082_repas-tejfoles-lencsefozelek-lisztmentes.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Sütőben sült pisztráng zöldségkörettel",
+    "file": "01_083_sutoben-sult-pisztrang-zoldsegkorettel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Bulgurral töltött káposzta",
+    "file": "01_084_bulgurral-toltott-kaposzta.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Kacsamell erdei gyümölcs szósszal, sült burgonyával és rukkola salátával",
+    "file": "01_085_kacsamell-erdei-gyumolcs-szosszal-sult-burgonyaval-es-rukkola-salataval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Airfryerben sült panírozott garnélarák avokádós-almás salátával",
+    "file": "01_086_airfryerben-sult-panirozott-garnelarak-avokados-almas-salataval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Narancsos csirkecomb zöldségekkel sütve",
+    "file": "01_087_gyomberes-narancsos-csirkecomb-zoldsegekkel-sutve.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Lencsefőzelék túrólepénnyel",
+    "file": "01_088_lencsefozelek-turolepennyel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Szűzérme fokhagymás gorgonzola mártással, rizzsel és savanyúsággal",
+    "file": "01_089_szuzerme-fokhagymas-gorgonzola-martassal-barna-rizzsel-es-savanyusaggal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Zabkorpás fasírt céklás-almás kölessel",
+    "file": "01_090_zabkorpas-fasirt-ceklas-almas-kolessel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Túrós-sajtos rakott penne",
+    "file": "01_091_turos-sajtos-rakott-penne.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Sertéskaraj sült édesburgonyával, almával párolt lilakáposztával",
+    "file": "01_092_serteskaraj-sult-edesburgonyaval-almaval-parolt-lilakaposztaval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Rakott savanyú káposzta",
+    "file": "01_093_rakott-savanyu-kaposzta.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Rozmaringos halfilé burgonyával és őszi káposzta salátával",
+    "file": "01_094_rozmaringos-halfile-burgonyaval-es-oszi-kaposzta-salataval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Mézes-mustáros csirkecomb barna rizses rizibizivel és sült répával",
+    "file": "01_095_mezes-mustaros-csirkecomb-barna-rizses-rizibizivel-es-sult-repaval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Zabpehellyel rakott joghurtos-sajtos karfiol",
+    "file": "01_096_zabpehellyel-rakott-joghurtos-sajtos-karfiol.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Spenótos kölesrizottó sült halfilével",
+    "file": "01_097_spenotos-koles-rizotto-sult-halfilevel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Tejszínes mediterrán sügérfilé barna rizzsel",
+    "file": "01_098_tejszines-mediterran-sugerfile-barna-rizzsel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Mustáros-tejszínes csirke bulgur rizibizivel",
+    "file": "01_099_mustaros-tejszines-csirke-bulgur-rizibizivel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Körtés-gorgonzolás csirkemell kakukkfüves bulgurral",
+    "file": "01_100_kortes-gorgonzolas-csirkemell-kakukkfuves-bulgurral.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Gombapaprikás quinoával",
+    "file": "01_101_gombapaprikas-quinoaval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Sütőtökös vöröslencse curry",
+    "file": "01_102_sutotokos-voroslencse-curry.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Zöldséges chilis bab",
+    "file": "01_103_zoldseges-chilis-bab.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Almás pulykafasírt kuszkusszal és káposzta salátával",
+    "file": "01_104_almas-pulykafasirt-kuszkusszal-es-kaposzta-salataval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Meleg almás bulgursaláta sült gyökérzöldségekkel, grillezett sajttal",
+    "file": "01_105_meleg-almas-bulgursalata-sult-gyokerzoldsegekkel-grillezett-sajttal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Zöldséges-paradicsomos tonhalas penne",
+    "file": "01_106_gombas-paradicsomos-tonhalas-penne.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Sütőben sült fűszeres lazacfilé kuszkusszal és almás-céklás salátával",
+    "file": "01_107_sutoben-sult-fuszeres-lazacfile-kuszkusszal-es-almas-ceklas-salataval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Ananászos-currys csirkemell bulgurral",
+    "file": "01_108_ananaszos-currys-csirkemell-bulgurral.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Tejfölös csirkepaprikás",
+    "file": "01_109_tejfolos-csirkepaprikas.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Paradicsomos túrós galette",
+    "file": "01_110_paradicsomos-turos-galette.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Sajtos zöldségtócsni joghurtos mártogatóssal",
+    "file": "01_111_sajtos-zoldsegtocsni-joghurtos-martogatossal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Sertéskaraj meggymártással és bulgurral",
+    "file": "01_112_serteskaraj-meggymartassal-es-bulgurral.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Vöröslencse dahl tükörtojással",
+    "file": "01_113_voroslencse-dahl-tukortojassal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Répás zöldbabfőzelék parmezános fasírttal",
+    "file": "01_114_repas-zoldbabfozelek-parmezanos-fasirttal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Quinoával töltött padlizsán",
+    "file": "01_115_quinoaval-toltott-padlizsan.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Lazacfasírt joghurtos mártogatóssal",
+    "file": "01_116_lazacfasirt-joghurtos-martogatossal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Rakott padlizsán",
+    "file": "01_117_rakott-padlizsan.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Grillezett csirkemell joghurtos kukoricasalátával",
+    "file": "01_118_grillezett-csirkemell-joghurtos-kukoricasalataval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Kölessel töltött paprika",
+    "file": "01_119_toltott-paprika.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Mozzarellás-paradicsomos csirkemell kölessel",
+    "file": "01_120_mozzarellas-paradicsomos-csirkemell-kolessel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Sütőben sült saslik quinoával",
+    "file": "01_121_sutoben-sult-saslik-quinoaval-2.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Fokhagymás garnélarák spenótos quinoával",
+    "file": "01_122_fokhagymas-garnelarak-spenotos-quinoaval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Rakott krumpli másképp",
+    "file": "01_123_rakott-krumpli-maskepp.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Grill csirkemell almás-diós kuszkusszal",
+    "file": "01_124_grill-csirkemell-almas-dios-kuszkusszal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Mozzarellás csirkemell sült zöldségekkel, joghurtos uborka salátával",
+    "file": "01_125_mozzarellas-csirkemell-sult-zoldsegekkel-joghurtos-uborka-salataval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Grill sajt almás-zelleres quinoa salátával",
+    "file": "01_126_grill-sajt-almas-zelleres-quinoa-salataval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Garnélarák quinoával és spárgával",
+    "file": "01_127_garnelarak-quinoaval-es-spargaval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Lazacos gyors tésztasaláta",
+    "file": "01_128_lazacos-gyors-tesztasalata.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Hawaii zabpizza",
+    "file": "01_129_hawaii-pizza.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Sajtos-zöldséges fasírt",
+    "file": "01_130_panirozott-halfile-bulgurral-es-tzatziki-szosszal-2.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Spenótos-currys vöröslencse főzelék tofuval",
+    "file": "01_131_spenotos-currys-voroslencse-fozelek-tofuval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Sajtos-tejföles sertéscomb bulgur rizibizivel",
+    "file": "01_132_sajtos-tejfoles-sertescomb-bulgur-rizibizivel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Panírozott halfilé bulgurral és tzatziki szósszal",
+    "file": "01_133_panirozott-halfile-bulgurral-es-tzatziki-szosszal.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Curry-s csirkemell teljes kiőrlésű spagettivel",
+    "file": "01_134_currys-csirkemell-teljes-kiorlesu-spagettivel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Lazacpisztráng póréhagymás-gombás bulgurral",
+    "file": "01_135_lazacpisztrang-porehagymas-gombas-bulgurral.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Lasagne",
+    "file": "01_136_zoldseges-lasagne.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Sütőben sült fűszeres lazacfilé, édesburgonya, párolt zöldbab",
+    "file": "01_137_sutoben-sult-fuszeres-lazacfile-edesburgonya-parolt-zoldbab.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Húsmentes rakott cukkini",
+    "file": "01_138_husmentes-rakott-cukkini.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Kecskesajtos-fűszeres csicseriborsó joghurtos öntettel",
+    "file": "01_139_kecskesajtos-fuszeres-csicseriborso-salataval-joghurtos-ontettel.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Grill csirkemell quinoával és görögsalátával",
+    "file": "01_140_grill-csirkemell-quinoaval-es-gorogsalataval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Aszalt paradicsomos-spenótos tészta",
+    "file": "01_141_aszalt-paradicsomos-spenotos-teszta.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Grillezett halloumi sajt tavaszi bulgur tabuléval",
+    "file": "01_142_grillezett-hallomi-sajt-bulgur-tavaszi-tabuleval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Zabpelyhes tonhalfasírt currys bulgurral, vegyes salátával",
+    "file": "01_143_zabpelyhes-tonhalfasirt-currys-bulgurral-vegyes-salataval.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Túrós “laska”",
+    "file": "01_144_turos-laska.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Vöröslencse fasírt",
+    "file": "01_145_fasirt.html",
+    "category": "ebedek"
+  },
+  {
+    "title": "Babos-kukoricás halkrém",
+    "file": "02_001_babos-halkrem.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Kukoricás-paradicsomos avokádókrém",
+    "file": "02_002_kukoricas-paradicsomos-avokadokrem.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Aszalt paradicsomos ricottakrém",
+    "file": "02_003_aszalt-paradicsomos-ricottakrem.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Aszalt paradicsomos tonhalkrém",
+    "file": "02_004_aszalt-paradicsomos-tonhalkrem.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Curry-s hummusz",
+    "file": "02_005_curry-s-hummusz.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Vöröslencse pástétom",
+    "file": "02_006_voroslencse-pastetom.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Házi majorannás májkrém",
+    "file": "02_007_hazi-majorannas-majkrem.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Cottage cheese-es tonhalpástétom",
+    "file": "02_008_egy-perces-tonhalkrem.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Avokádós-hagymás tojáskrém",
+    "file": "02_009_avokados-hagymas-tojaskrem.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Újhagymás lazacpástétom",
+    "file": "02_010_ujhagymas-lazacpastetom.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Bazsalikomos túrókrém",
+    "file": "02_011_bazsalikomos-turokrem.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Tojásos-répás tonhalkrém",
+    "file": "02_012_tojasos-repas-tonhalkrem.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Sült paprika kence (muhammara)",
+    "file": "02_013_sult-paprika-kence-muhammara.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Sütőtökös hummusz",
+    "file": "02_014_sutotokos-hummusz.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Currys babkrém",
+    "file": "02_015_currys-babkrem.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Túrókrém variációk",
+    "file": "02_016_turokrem-variaciok.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Avokádós tonhalkrém",
+    "file": "02_017_avokados-tonhalkrem.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Aszalt paradicsomos hummusz",
+    "file": "02_018_aszalt-paradicsomos-hummusz.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Újhagymás tojáskrém",
+    "file": "02_019_ujhagymas-tojaskrem.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Kukoricás-lilahagymás tonhalkrém",
+    "file": "02_020_tonhalkrem.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Céklás hummusz",
+    "file": "02_021_ceklas-hummusz.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Avokádós-kapros cottage cheese",
+    "file": "02_022_avokados-cottage-cheeses-szendvicskrem.html",
+    "category": "kencek"
+  },
+  {
+    "title": "Tavaszi borsóleves galuskával",
+    "file": "03_001_tavaszi-borsoleves-galuskaval.html",
+    "category": "levesek"
+  },
+  {
+    "title": "Zöldpaszuly leves (zsírszegény, könnyed recept)",
+    "file": "03_002_zoldpaszuly-leves-zsirszegeny-konnyed-recept.html",
+    "category": "levesek"
+  },
+  {
+    "title": "Karalábé leves kapros túrógombóccal",
+    "file": "03_003_karalabe-leves-kapros-turogomboccal.html",
+    "category": "levesek"
+  },
+  {
+    "title": "Egyszerű húsgombóc leves",
+    "file": "03_004_egyszeru-husgomboc-leves.html",
+    "category": "levesek"
+  },
+  {
+    "title": "Tárkonyos csirkeragu leves",
+    "file": "03_005_tarkonyos-csirkeragu-leves.html",
+    "category": "levesek"
+  },
+  {
+    "title": "Karalábé krémleves",
+    "file": "03_006_karalabe-kremleves.html",
+    "category": "levesek"
+  },
+  {
+    "title": "Spárgakrémleves zöldborsóval",
+    "file": "03_007_spargakremleves-zoldborsoval.html",
+    "category": "levesek"
+  },
+  {
+    "title": "Hideg hozzáadott cukortól mentes mentás eperleves",
+    "file": "03_008_hideg-hozzaadott-cukortol-mentes-mentas-eperleves.html",
+    "category": "levesek"
+  },
+  {
+    "title": "Hideg hozzáadott cukortól mentes meggyleves",
+    "file": "03_009_hideg-cukormentes-meggyleves.html",
+    "category": "levesek"
+  },
+  {
+    "title": "Kókusztejes-currys karfiolkrémleves",
+    "file": "03_010_kokusztejes-currys-karfiolkremleves.html",
+    "category": "levesek"
+  },
+  {
+    "title": "Gyömbéres sárgarépa krémleves",
+    "file": "03_011_gyomberes-sargarepa-kremleves.html",
+    "category": "levesek"
+  },
+  {
+    "title": "Paradicsomos lencseleves",
+    "file": "03_012_paradicsomos-lencseleves.html",
+    "category": "levesek"
+  },
+  {
+    "title": "Tejszínes zöldborsóleves basmati rizzsel és csirkemellel",
+    "file": "03_013_tejszines-zoldborsoleves-basmati-rizzsel-es-csirkevel.html",
+    "category": "levesek"
+  },
+  {
+    "title": "Sütőtökös zöldségkrémleves",
+    "file": "03_014_sutotokos-zoldsegkremleves.html",
+    "category": "levesek"
+  },
+  {
+    "title": "Füstölt sajtos gombakrémleves",
+    "file": "03_015_fustolt-sajtos-gombakremleves.html",
+    "category": "levesek"
+  },
+  {
+    "title": "Tejszínes karalábéleves basmati rizzsel",
+    "file": "03_016_tejszines-karalabe-leves-basmati-rizzsel.html",
+    "category": "levesek"
+  },
+  {
+    "title": "Bazsalikomos-sajtos cukkini krémleves",
+    "file": "03_017_bazsalikomos-sajtos-cukkini-kremleves.html",
+    "category": "levesek"
+  },
+  {
+    "title": "Gyros fűszerezésű csirkés tortilla tekercs fűszeres joghurtos öntettel, zöldségekkel",
+    "file": "04_001_gyros-fuszerezesu-csirkes-tortilla-tekercs-fuszeres-joghurtos-ontettel-zoldsegekkel.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Zöldség tócsni kapros tzatzikivel",
+    "file": "04_002_zoldseg-tocsni-kapros-tzatzikivel.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Grill sajtos wrap házi joghurtos öntettel",
+    "file": "04_003_grill-sajtos-wrap-hazi-joghurtos-ontettel.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Babos-avokádó wrap füstölt tofuval",
+    "file": "04_004_babos-avokado-wrap-fustolt-tofuval.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Vöröslencse-tortilla (tojás nélkül)",
+    "file": "04_005_voroslencse-tortilla-tojas-nelkul.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Chia magos-ricottás kása meggyel",
+    "file": "04_006_chia-magos-ricottas-kasa-meggyel.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Spenótos-sajtos pite (quiche)",
+    "file": "04_007_spenotos-sajtos-pite-quiche.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Fűszeres narancsos zabkása darált dióval és gránátalmával",
+    "file": "04_008_fuszeres-narancsos-zabkasa-daralt-dioval-es-granatalmaval.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Sütőtökös palacsinta (fehérjedús, cukormentes)",
+    "file": "04_009_sutotokos-palacsinta-feherjedus-cukormentes.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Áfonyás-étcsokoládés kása (tejmentes)",
+    "file": "04_010_afonyas-etcsokolades-kasa-tejmentes.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Meggyes-vaníliás éjszakázós kása (tejmentes)",
+    "file": "04_011_meggyes-vanilias-ejszakazos-kasa-tejmentes.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Avokádókrémes szendvics füstölt lazaccal",
+    "file": "04_012_avokadokremes-szendvics-fustolt-lazaccal.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Gombás-sajtos rántottával töltött tortilla tekercs",
+    "file": "04_013_gombas-sajtos-rantottaval-toltott-tortilla-tekercs.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Gluténmentes sós hajdinalepény",
+    "file": "04_014_sonkas-sajtos-hajdinalepeny.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Céklás tortilla kecskesajttal",
+    "file": "04_015_ceklas-tortilla-kecskesajttal.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Avokádókrémes szendvics tükörtojással",
+    "file": "04_016_avokadokremes-szendvics-tukortojassal.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Kakaós fahéjas kása körtével",
+    "file": "04_017_kakaos-fahejas-kasa-kortevel.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Almás-túrós palacsinta",
+    "file": "04_018_almas-turos-palacsinta.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Padlizsánkrém majonéz nélkül",
+    "file": "04_019_padlizsankrem-majonez-nelkul.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Vadkovászos teljes kiőrlésű kenyér",
+    "file": "04_020_vadkovaszos-teljes-kiorlesu-kenyer.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Édes kapros-túrós palacsinta",
+    "file": "04_021_edes-kapros-turos-palacsinta.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Cseresznyés-mákos áztatott kása",
+    "file": "04_022_cseresznyes-makos-aztatott-kasa.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Cukkinis-feta sajtos omlett",
+    "file": "04_023_cukkinis-feta-sajtot-omlett.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Zöldséges-sonkás rántottával töltött tortilla tekercs",
+    "file": "04_024_zoldseges-sonkas-rantottaval-toltott-tortilla-tekercs.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Zabpelyhes tojáslepény füstölt lazaccal",
+    "file": "04_025_zabpelyhes-tojaslepeny-fustolt-lazaccal-2.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Shakshuka csicseriborsóval",
+    "file": "04_026_shakshuka-csicseriborsoval.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Humusszal töltött tojás",
+    "file": "04_027_humusszal-toltott-tojas.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Kókuszos zabkása",
+    "file": "04_028_kokuszos-zabkasa.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Ricottás áfonyás palacsinta",
+    "file": "04_029_ricottas-afonyas-palacsinta.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Medvehagymás-kapros sós muffinok",
+    "file": "04_030_medvehagymas-kapros-sos-muffinok.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Avokádókrémes grill sajtos tortilla melegszendvics",
+    "file": "04_031_avokadokremes-grill-sajtos-tortilla-melegszendvics.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Almás-mákos kása",
+    "file": "04_032_almas-makos-kasa.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Tonhalkrémes-tojásos tortilla melegszendvics",
+    "file": "04_033_tonhalkremes-tojasos-tortilla-melegszendvics.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Pár perces sonkás-sajtos tojáslepény",
+    "file": "04_034_par-perces-sonkas-sajtos-tojaslepeny.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Paprikás-sonkás tojáskrémmel töltött tortilla lap",
+    "file": "04_035_paprikas-sonkas-tojaskremmel-toltott-tortilla-lap.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Sós tonhalas-kukoricás kása",
+    "file": "04_036_sos-tonhalas-kukoricas-kasa.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Avokádós töltött tojás",
+    "file": "04_037_avokados-toltott-tojas.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Zöldséges-füstölt lazacos pite",
+    "file": "04_038_zoldseges-pite.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Ricottás narancsos-répás kása",
+    "file": "04_039_ricottas-narancsos-repas-kasa.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Zöldséglepény",
+    "file": "04_040_zoldseges-tejszines-zablepeny.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Gombás-sonkás tojáslepény gorgonzola sajttal",
+    "file": "04_041_gombas-sonkas-tojaslepeny-gorgonzola-sajttal.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Kapros sajtkrémmel töltött zabpalacsinta füstölt lazaccal",
+    "file": "04_042_kapros-sajtkremmel-toltott-zabpalacsinta-fustolt-lazaccal.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Répás-sajtos sós muffinok",
+    "file": "04_043_tonhalas-sajtos-muffinok-2.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Édes bundáskenyér",
+    "file": "04_044_edes-bundaskenyer.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Fehérbabos-paradicsomos tortilla szendvics",
+    "file": "04_045_feher-babos-paradicsomos-tortilla-szendvics.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Ricottás-körtés kása",
+    "file": "04_046_ricottas-kortes-kasa.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Zablepény zakuszkával és sonkával töltve",
+    "file": "04_047_zablepeny-zakuszkaval-es-sonkaval-toltve.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Hozzáadott cukortól mentes körtés granola",
+    "file": "04_048_hozzaadott-cukortol-mentes-kortes-granola.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Tonhalkrémes wrap savanyú uborkával",
+    "file": "04_049_tonhalkremes-wrap-savanyu-uborkaval.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Petrezselymes tofu rántotta",
+    "file": "04_050_grill-sajtos-kuszkusz-2.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Grill sajtos kuszkusz",
+    "file": "04_051_grill-sajtos-kuszkusz.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Olívabogyós tojáskrémes szendvics",
+    "file": "04_052_olivabogyos-tojaskrem.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Tonhalas-sajtos muffinok",
+    "file": "04_053_tonhalas-sajtos-muffinok.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Fűszeres tofuval töltött tortilla tekercs",
+    "file": "04_054_fuszeres-tofuval-toltott-tortilla-tekercs.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Sajtos gofri",
+    "file": "04_055_sajtos-gofri.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Csicseriborsó lepény",
+    "file": "04_056_csicseriborso-lepeny.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Zöldséges frittata",
+    "file": "04_057_zoldseges-fritatta.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Tojásos tortilla pite",
+    "file": "04_058_tojasos-tortilla-pite.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Cukkinis brazil diós zabkása",
+    "file": "04_059_cukkinis-brazil-dios-zabkasa.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Kókuszos túrókrémmel töltött teherhető zabpalacsinta",
+    "file": "04_060_kokuszos-turokremmel-toltott-teherheto-zabpalacsinta.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Zabpelyhes-sonkás tojásmuffinok",
+    "file": "04_061_zabpelyhes-sonkas-tojasmuffinok.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Tonhalas feta sajtos zabkása",
+    "file": "04_062_tonhalas-feta-sajtos-zabkasa.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Sós palacsinta cottage cheese-zel",
+    "file": "04_063_sos-palacsinta-cottage-cheesel.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Shakshuka",
+    "file": "04_064_shakshuka-2.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Tejbebulgur",
+    "file": "04_065_tejbebulgur.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Ricottás áztatott kása házi lekvárral",
+    "file": "04_066_ricottas-aztatott-kasa-hazi-lekvarral.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Császármorzsa",
+    "file": "04_067_csaszarmorzsa.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Bundáskenyér",
+    "file": "04_068_bundaskenyer.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Tükörtojás spenótágyon quinoával",
+    "file": "04_069_tukortojas-spenotagyon-quinoaval.html",
+    "category": "reggelik"
+  },
+  {
+    "title": "Grillezett tofu babsalátával, mézes-mustáros öntettel",
+    "file": "05_001_grillezett-tofu-salata-kukoricaval-es-vorosbabbal.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Tavaszias poké tál (poke bowl)",
+    "file": "05_002_tavaszias-poke-tal-poke-bowl.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Kukoricás répasaláta sajttal, avokádóval és almával",
+    "file": "05_003_kukoricas-repasalata-sajttal-es-almaval.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Ananászos-csirkés saláta joghurtos öntettel",
+    "file": "05_004_ananaszos-csirkes-salata-joghurtos-ontettel.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Cézár saláta újragondolva",
+    "file": "05_005_cezar-salata-ujragondolva.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Falafel tahini öntettel",
+    "file": "05_006_csicseriborso-fasirt-fokhagyma-szosszal-salataval-2.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Tojásos tavaszi bulgursaláta",
+    "file": "05_007_tojasos-tavaszi-bulgursalata.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Fűszeres sült csicseriborsó saláta quinoával",
+    "file": "05_008_fuszeres-sult-csicseriborsos-salata.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Narancsos bulgursaláta garnélával",
+    "file": "05_009_narancsos-bulgursalata-garnelaval.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Sütőtökös lencsés saláta gránátalmával",
+    "file": "05_010_sutotokos-lencses-salata-granatalmaval.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Kukoricás-répás avokádó saláta grill halloumi sajttal",
+    "file": "05_011_kukoricas-avokado-salata-halloumi-sajttal.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Babsaláta főtt tojással",
+    "file": "05_012_babsalata-fott-tojassal.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Meleg sült gyökérzöldség saláta",
+    "file": "05_013_meleg-sult-gyokerzoldseg-salata.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Csicseriborsó fasírt fokhagyma szósszal, salátával",
+    "file": "05_014_csicseriborso-fasirt-fokhagyma-szosszal-salataval.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Quinoa saláta garnélarákkal",
+    "file": "05_015_quinoa-salata-garnelarakkal.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Pirított fűszeres tofu saláta",
+    "file": "05_016_piritott-fuszeres-tofu-salataval.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Buddha tál",
+    "file": "05_017_buddha-tal.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Hideg kuszkuszsaláta",
+    "file": "05_018_hideg-kuszkuszsalata.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Füstölt lazacos quinoa saláta",
+    "file": "05_019_fustolt-lazacos-quinoa-salata.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Hideg tonhalas tésztasaláta",
+    "file": "05_020_hideg-tonhalas-tesztasalata.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Répasaláta feta sajttal és ananásszal",
+    "file": "05_021_repasalata-feta-sajttal-es-ananasszal.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Almás-répás lencsesaláta",
+    "file": "05_022_almas-repas-lencsesalata.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Görög tésztasaláta",
+    "file": "05_023_gorog-tesztasalata.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Quinoa saláta csirkemellel, feta sajttal és mustáros öntettel",
+    "file": "05_024_quinoa-salata-csirkemellel-feta-sajttal-es-mustaros-ontettel.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Mangós kuszkuszsaláta csirkével vagy tofuval",
+    "file": "05_025_mangos-kuszkuszsalata-csirkevel-vagy-tofuval.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Epres-tökmagos saláta grill sajttal",
+    "file": "05_026_epres-tokmagos-salata-grill-sajttal.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Bulgur tabulé saláta vörösbabbal",
+    "file": "05_027_bulgur-tabule-salata-vorosbabbal.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Kölessaláta variációk (tonhalas vagy feta sajtos)",
+    "file": "05_028_kolessalata-variaciok-tonhalas-vagy-feta-sajtos.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Avokádós kuszkuszsaláta csicseriborsóval",
+    "file": "05_029_avokados-kuszkuszsalata-csicseriborsoval.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Téli karalábé-alma saláta",
+    "file": "05_030_teli-karalabe-alma-salata.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Téliesített tonhalsaláta",
+    "file": "05_031_teliesitett-tonhalsalata.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Feta sajtos sült cékla saláta",
+    "file": "05_032_feta-sajtos-sult-cekla-salata.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Sütőtökös saláta",
+    "file": "05_033_sutotokos-salata.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Vegán mexikói babsaláta",
+    "file": "05_034_vegan-mexikoi-babsalata.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Körtés feta sajtos quinoa saláta",
+    "file": "05_035_kortes-feta-sajtos-quinoa-salata.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Barackos feta sajtos saláta",
+    "file": "05_036_barackos-feta-sajtos-salata.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Pesztós mozzarellás tésztasaláta",
+    "file": "05_037_pesztos-csirkes-teszta-grill-zoldsegekkel.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Sült édesburgonya saláta kecskesajttal",
+    "file": "05_038_sult-edesburgonya-salata-kecskesajttal.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Tonhalas kuszkuszsaláta",
+    "file": "05_039_tonhalas-kuszkuszsalata.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Kecskesajtos lencsesaláta",
+    "file": "05_040_5-perces-lencsesalata.html",
+    "category": "salatak"
+  },
+  {
+    "title": "Csicseriborsós quinoa saláta feta sajttal",
+    "file": "05_041_csicseriborsos-quinoa-salata-feta-sajttal.html",
+    "category": "salatak"
+  }
+];
+
+    function renderRecipes() {
+      console.log("Renderelés indult...");
+      const list = document.getElementById("recipeList");
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const ingredient = document.getElementById("ingredientInput").value.toLowerCase();
+      const category = document.getElementById("categorySelect").value;
+
+      list.innerHTML = "";
+      recipes.forEach(r => {
+        const matchQuery = r.title.toLowerCase().includes(query);
+        const matchCat = !category || r.category === category;
+        const matchIng = !ingredient || r.title.toLowerCase().includes(ingredient);
+        if (matchQuery && matchCat && matchIng) {
+          const li = document.createElement("li");
+          li.className = "recipe";
+          li.innerHTML = `<a href="` + r.file + `">` + r.title + `</a>`;
+          list.appendChild(li);
+        }
+      });
+    }
+
+    function showRandom() {
+      const category = document.getElementById("categorySelect").value;
+      const filtered = category ? recipes.filter(r => r.category === category) : recipes;
+      if (filtered.length === 0) return;
+      const r = filtered[Math.floor(Math.random() * filtered.length)];
+      window.location.href = r.file;
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      console.log("DOMContentLoaded lefutott.");
+      document.getElementById("searchInput").addEventListener("input", renderRecipes);
+      document.getElementById("ingredientInput").addEventListener("input", renderRecipes);
+      document.getElementById("categorySelect").addEventListener("change", renderRecipes);
+      renderRecipes();
+    });
+  </script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js')
+        .then(function (registration) {
+          console.log('ServiceWorker regisztrálva:', registration.scope);
+        }, function (err) {
+          console.log('ServiceWorker hiba:', err);
+        });
+    });
+  }
+</script>
+</body>
+</html>
